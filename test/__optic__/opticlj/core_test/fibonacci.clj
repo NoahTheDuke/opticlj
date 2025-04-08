@@ -1,3 +1,4 @@
+;; opticlj/core_test.clj 24:33
 (in-ns 'opticlj.core-test)
 
 (fib 10)

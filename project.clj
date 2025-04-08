@@ -3,7 +3,7 @@
   :url "http://github.com/lambdahands/opticlj"
   :license {:name "MIT"}
   :dependencies [;; Clojure Deps
-                 [org.clojure/clojure "1.8.0"]
+                 [org.clojure/clojure "1.10.3"]
                  [com.googlecode.java-diff-utils/diffutils "1.3.0"]
                  ;; ClojureScript Deps
                  [org.clojure/clojurescript "1.9.908"]
@@ -11,12 +11,13 @@
                  [figwheel-sidecar "0.5.13"]
                  [com.cemerick/piggieback "0.2.1"]
                  [doo "0.1.7"]
-                 [zprint "0.4.9"]
-                 [clojure-future-spec "1.9.0-alpha17"]]
+                 [org.clojure/tools.reader "1.5.2"]
+                 [zprint "1.2.9"]
+                 [org.clojure/spec.alpha "0.5.238"]]
   :plugins      [[lein-cljsbuild "1.1.7"]
                  [lein-figwheel "0.5.13"]
                  [lein-doo "0.1.7"]]
-  :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
+  ; :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
   :clean-targets ^{:protect false} ["target"]
   :cljsbuild {:builds [{:id "test"
                         :source-paths ["src/opticlj/cljs/" "test/opticlj/cljs/"]

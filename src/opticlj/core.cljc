@@ -13,15 +13,23 @@
 ;; Library exports
 
 (defmacro defoptic [kw form & {:keys [dir system]}]
-  `(let [dir#  (or ~dir (some-> ~system deref :dir) (:dir @system*))
-         path# (file/stage dir# (file/sym->filepath ~kw))
-         run#  (fn []
-                 (let [optic# (writer/write path# ~kw '~form ~form)]
-                   (swap! (or ~system system*) update :optics assoc ~kw optic#)
-                   optic#))]
-     (swap! (or ~system system*) update :optic-fns assoc ~kw run#)
-     (run#)
-     ~kw))
+  (let [m (or (meta form) (meta &form))
+        f #?(:clj *file* :cljs js/__filename)]
+    `(let [dir#  (or ~dir (some-> ~system deref :dir) (:dir @system*))
+           path# (file/stage dir# (file/sym->filepath ~kw))
+           f# *file*
+           run#  (fn []
+                   (let [optic# (writer/write {:path path#
+                                               :kw ~kw
+                                               :file ~f
+                                               :meta ~m
+                                               :form '~form
+                                               :result ~form})]
+                     (swap! (or ~system system*) update :optics assoc ~kw optic#)
+                     optic#))]
+       (swap! (or ~system system*) update :optic-fns assoc ~kw run#)
+       (run#)
+       ~kw)))
 
 (defn run
   ([kw] (run kw system*))

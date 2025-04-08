@@ -1,3 +1,4 @@
+;; opticlj/core_test.clj 16:1
 (in-ns 'opticlj.core-test)
 
 [(file/err-path "foo.clj") (file/err-path "foo-bar-baz..clj")]

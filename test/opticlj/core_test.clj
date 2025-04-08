@@ -7,7 +7,9 @@
 
 (optic/defoptic ::form-output-stream
   (map (fn [[form result]]
-         (writer/form-output-stream `writer/form-output-stream form result))
+         (writer/form-output-stream
+           "cool_file.clj" {:line 10 :column 20}
+           `writer/form-output-stream form result))
        '[[(+ 1 1)              2]
          [(map inc (range 10)) (1 2 3 4 5 6 7 8 9 10)]]))
 

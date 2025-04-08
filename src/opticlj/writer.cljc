@@ -1,31 +1,32 @@
 (ns opticlj.writer
   (:require [clojure.string :as str]
             [opticlj.file :as file]
-            [zprint.core :refer [zprint-str]])
-  #?(:clj (:import [java.io Writer])))
+            [zprint.core :refer [zprint-str]]))
 
 ;; Manage diff display
 
-(defrecord Diff [string])
-
-#?(:clj (defmethod print-method Diff [v ^Writer w]
-          (.write w "{:string <truncated>}")))
-
-#?(:cljs (extend-protocol IPrintWithWriter
-           Diff
-           (-pr-writer [_ w _]
-             (write-all w "{:string <truncated>}"))))
+(defrecord Diff [string]
+  Object
+  (toString [_] "{:string <truncated>}"))
 
 ;; Output stream writer
 
+(defn format-str
+  [form]
+  (zprint-str form {:style :community
+                    :map {:force-nl? true
+                          :sort-in-code? true}
+                    :record {:to-string? true}}))
+
 (defn fmt-result [result]
   (if (string? result)
-    (str/split (zprint-str result) #"\\n")
-    [(zprint-str result)]))
+    (str/split (format-str result) #"\\n")
+    [(format-str result)]))
 
-(defn form-output-stream [kw form result]
-  (str/join "\n" (concat [(str "(in-ns '" (namespace kw) ")") ""
-                          (zprint-str form) ""]
+(defn form-output-stream [file meta kw form result]
+  (str/join "\n" (concat [(str ";; " file " " (:line meta) ":" (:column meta))
+                          (str "(in-ns '" (namespace kw) ")") ""
+                          (format-str form) ""]
                          (fmt-result result)
                          [""])))
 
@@ -45,8 +46,8 @@
 
 ;; Test checker
 
-(defn write [path kw form result]
-  (let [output   (form-output-stream kw form result)
+(defn write [{:keys [path file meta kw form result]}]
+  (let [output   (form-output-stream file meta kw form result)
         err-path (file/err-path path)]
     (merge {:form form :result result :kw kw}
      (if-let [diff (and (file/exists path) (file/diff path err-path output))]
