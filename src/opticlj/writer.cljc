@@ -12,10 +12,12 @@
 ;; Output stream writer
 
 (defn format-str
+  "Wrap zprint to make printing consistent."
   [form]
   (zprint-str form {:style :community
                     :map {:force-nl? true
                           :sort-in-code? true}
+                    :set {:sort-in-code? true}
                     :record {:to-string? true}}))
 
 (defn fmt-result [result]
