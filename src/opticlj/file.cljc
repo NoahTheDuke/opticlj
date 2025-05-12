@@ -1,24 +1,23 @@
 (ns opticlj.file
-  (:require #?(:clj [clojure.java.io :as io])
-            #?(:cljs [cljsjs.jsdiff])
-            [clojure.string :as str])
-  #?(:clj (:import [java.io BufferedReader StringReader FileReader]
-                   [difflib DiffUtils])))
-
-#?(:cljs (def fs        (js/require "fs")))
-#?(:cljs (def node-path (js/require "path")))
+  (:require
+   #?(:clj [clojure.java.io :as io])
+   #?(:cljs ["diff" :as diff])
+   #?(:cljs ["fs" :as fs])
+   #?(:cljs ["path" :as path])
+   [clojure.string :as str])
+  #?(:clj (:import
+           [difflib DiffUtils]
+           [java.io BufferedReader FileReader StringReader])))
 
 ;; File utils
 
-(def file-match #?(:clj  #"(\.err\.clj$|\.clj$)"
-                   :cljs #"(\.err\.cljs$|\.cljs$)"))
+(def file-match #"(\.err\.opticlj$)")
 
 (defn sym->filepath [sym]
   (let [ns-str   (str/replace (namespace sym) #"-" "_")
         sym-file (str/replace (name sym) #"-" "_")
         path-vec (str/split ns-str #"\.")]
-    (str/join "/" (conj path-vec (str sym-file #?(:clj  ".clj"
-                                                  :cljs ".cljs"))))))
+    (str/join "/" (conj path-vec (str sym-file ".opticlj")))))
 
 (defn filepath->sym [filepath prefix]
   (let [subpath (str/replace filepath (re-pattern (str "^" prefix "?/")) "")
@@ -37,29 +36,29 @@
 
 #?(:cljs
    (defn mkdir [parent child]
-     (let [curdir (node-path.resolve parent child)]
-       (when-not (fs.existsSync curdir)
-         (fs.mkdirSync curdir))
+     (let [curdir (path/resolve parent child)]
+       (when-not (fs/existsSync curdir)
+         (fs/mkdirSync curdir))
        curdir)))
 
 (defn stage [dir path]
   #?(:clj  (str (doto (io/file dir path) (.. getParentFile mkdirs)))
-     :cljs (let [path' (node-path.join dir path)]
-             (reduce mkdir (str/split (node-path.dirname path') #"/"))
+     :cljs (let [path' (path/join dir path)]
+             (reduce mkdir (str/split (path/dirname path') #"/"))
              path')))
 
 (defn exists [path]
   #?(:clj  (.exists (io/file path))
-     :cljs (fs.existsSync path)))
+     :cljs (fs/existsSync path)))
 
 (defn rename [from-path to-path]
   #?(:clj  (.renameTo (io/file to-path) (io/file from-path))
      :cljs (when (exists from-path)
-             (fs.rename from-path to-path (constantly nil)))))
+             (fs/rename from-path to-path (constantly nil)))))
 
 (defn delete [path]
   #?(:clj  (.delete (io/file path))
-     :cljs (when (exists path) (fs.unlink path (constantly nil)))))
+     :cljs (when (exists path) (fs/unlink path (constantly nil)))))
 
 (defn path [file]
   #?(:clj  (.getPath file)
@@ -67,11 +66,10 @@
 
 (defn write [file output]
   #?(:clj  (spit file output)
-     :cljs (fs.writeFileSync file output)))
+     :cljs (fs/writeFileSync file output)))
 
 (defn err-path [path]
-  #?(:clj  (str/replace path #"\.clj$" ".err.clj")
-     :cljs (str/replace path #"\.cljs$" ".err.cljs")))
+  (str/replace path #"\.opticlj$" ".err.opticlj"))
 
 ;; diff
 (defn diff [path err-path output]
@@ -81,6 +79,6 @@
                 unified (DiffUtils/generateUnifiedDiff path err-path f-lines f-diff 3)]
             (when (seq unified)
               (str/join "\n" unified)))
-     :cljs (let [file-str (.toString (fs.readFileSync path))]
+     :cljs (let [file-str (.toString (fs/readFileSync path))]
              (when-not (= file-str output)
-               (js/JsDiff.createTwoFilesPatch path err-path file-str output)))))
+               (diff/createTwoFilesPatch path err-path file-str output)))))

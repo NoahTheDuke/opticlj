@@ -77,9 +77,9 @@ Define an `optic` like so:
 This does two things:
 
 - Defines "runner" function that can be accessed with `opticlj.core/run`
-- Writes an output file in `test/__optic__/my_project/core_test/one_plus_one.clj`
+- Writes an output file in `test/__optic__/my_project/core_test/one_plus_one.opticlj`
 
-Here's what `one_plus_one.clj` looks like:
+Here's what `one_plus_one.opticlj` looks like:
 
 ```clj
 (in-ns 'my-project.core-test)
@@ -102,8 +102,8 @@ output confirming the snapshot was checked:
 (run ::one-plus-one)
 
 ; outputs
-{:file "test/__optic__/my_project/core_test/one_plus_one.clj"
- :err-file "test/__optic__/my_project/core_test/one_plus_one.err.clj"
+{:file "test/__optic__/my_project/core_test/one_plus_one.opticlj"
+ :err-file "test/__optic__/my_project/core_test/one_plus_one.err.opticlj"
  :passing? false
  :diff {:string "<truncated>"}
  :form (add 1 1)
@@ -111,7 +111,7 @@ output confirming the snapshot was checked:
  :kw :my-project.core-test/one-plus-one}
 ```
 
-A new file was created: `test/__optic__/my_project/core_test/one_plus_one.err.clj`
+A new file was created: `test/__optic__/my_project/core_test/one_plus_one.err.opticlj`
 
 ```clj
 (in-ns 'my-project.core-test)
@@ -127,7 +127,7 @@ calling `optic/errors`:
 ```clj
 (optic/errors)
 ; prints
---- test/__optic__/my_project/core_test/one_plus_one.clj   2017-09-22 16:03:38.000000000 -0500
+--- test/__optic__/my_project/core_test/one_plus_one.opticlj   2017-09-22 16:03:38.000000000 -0500
 +++ -   2017-09-22 16:04:38.000000000 -0500
 @@ -2,4 +2,4 @@
 
@@ -150,7 +150,7 @@ of one and one equal to four. We can `adjust!` our optic to accept these new rul
 (optic/adjust! ::one-plus-one)
 
 ; outputs
-{:adjusted {:file "test/__optic__/my_project/core_test/one_plus_one.clj"
+{:adjusted {:file "test/__optic__/my_project/core_test/one_plus_one.opticlj"
             :passing? true
             :diff nil
             :err-file nil

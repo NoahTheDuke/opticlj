@@ -1,0 +1,1 @@
+{:lint-as {opticlj.clojure-test/defcram clojure.test/deftest}}

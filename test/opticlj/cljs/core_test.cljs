@@ -1,8 +1,8 @@
-(ns ^:figwheel-always opticlj.cljs.core-test
-  (:require [clojure.test :as test :refer-macros [deftest]]
-            [opticlj.core :as optic :refer-macros [defoptic]]))
+(ns opticlj.cljs.core-test
+  (:require [clojure.test :refer [deftest is]]
+            [opticlj.core :refer [defoptic ok? review!]]))
 
 (defoptic ::two-plus-two (+ 2 2))
 
 (deftest optics
-  (test/is (optic/ok? (optic/review!))))
+  (is (ok? (review!))))

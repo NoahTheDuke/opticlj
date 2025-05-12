@@ -25,10 +25,11 @@
     (str/split (format-str result) #"\\n")
     [(format-str result)]))
 
-(defn form-output-stream [file meta kw form result]
+(defn form-output-stream [file meta form result]
   (str/join "\n" (concat [(str ";; " file " " (:line meta) ":" (:column meta))
-                          (str "(in-ns '" (namespace kw) ")") ""
-                          (format-str form) ""]
+                          ""
+                          (format-str form)
+                          ""]
                          (fmt-result result)
                          [""])))
 
@@ -49,7 +50,7 @@
 ;; Test checker
 
 (defn write [{:keys [path file meta kw form result]}]
-  (let [output   (form-output-stream file meta kw form result)
+  (let [output   (form-output-stream file meta form result)
         err-path (file/err-path path)]
     (merge {:form form :result result :kw kw}
      (if-let [diff (and (file/exists path) (file/diff path err-path output))]

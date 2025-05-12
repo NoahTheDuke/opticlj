@@ -1,6 +1,7 @@
 (ns opticlj.core
   (:require [opticlj.file :as file]
-            [opticlj.writer :as writer]))
+            [opticlj.writer :as writer])
+  #?(:cljs (:require-macros [opticlj.core])))
 
 ;; System
 
@@ -17,11 +18,11 @@
         f #?(:clj *file* :cljs js/__filename)]
     `(let [dir#  (or ~dir (some-> ~system deref :dir) (:dir @system*))
            path# (file/stage dir# (file/sym->filepath ~kw))
-           f# *file*
+           f# ~f
            run#  (fn []
                    (let [optic# (writer/write {:path path#
                                                :kw ~kw
-                                               :file ~f
+                                               :file f#
                                                :meta ~m
                                                :form '~form
                                                :result ~form})]

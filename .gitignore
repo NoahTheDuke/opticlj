@@ -18,3 +18,5 @@ pom.xml.asc
 node_modules/
 .cljs_rhino_repl/
 figwheel_server.log
+.cpcache
+.shadow-cljs
