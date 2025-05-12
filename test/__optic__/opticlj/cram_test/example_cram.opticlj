@@ -1,0 +1,5 @@
+;; opticlj/cram_test.cljc :
+
+[(= 6 (+ 3 3))]
+
+[true]

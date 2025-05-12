@@ -8,5 +8,5 @@
   [test-name & body]
   (let [kw (keyword (str *ns*) (name test-name))]
     `(do (defoptic ~kw [~@body])
-         (cljs.test/deftest ~test-name
+         (clojure.test/deftest ~test-name
            (clojure.test/is (optic/check (optic/run ~kw)))))))

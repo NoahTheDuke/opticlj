@@ -1,0 +1,5 @@
+;; opticlj/core_test.clj 16:1
+
+[(file/err-path "foo.opticlj") (file/err-path "foo-bar-baz..opticlj")]
+
+["foo.err.opticlj" "foo-bar-baz..err.opticlj"]
